@@ -24,7 +24,7 @@ const Style = styled.div`
     font-family: Segoe UI;
     font-size: 14px;
     font-style: normal;
-    font-weight: 400;
+    font-weight: 500;
     line-height: 11px; /* 78.571% */
     text-transform: lowercase;
   }

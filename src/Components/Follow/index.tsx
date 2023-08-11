@@ -1,15 +1,27 @@
-import React from "react";
+import React, { FC } from "react";
 import Style from "./Style";
 import avatar from "../../assets/images/Profile-Pic-S.png";
-const Follow = () => {
+interface FollowTpye {
+  active?: string;
+  size?: string;
+  name: string;
+  avatars?: string;
+}
+const Follow: FC<FollowTpye> = ({ active, size, name, avatars }) => {
   return (
     <Style>
-      <img className="avatar" src={avatar} alt="" />
+      <img
+        className={`avatar ${size ? "big_img" : ""} `}
+        src={avatars ? avatars : avatar}
+        alt=""
+      />
       <div className="info">
-        <h4 className="name">terylucas</h4>
-        <p className="Followed">Followed by terylucas + 2 more</p>
+        <h4 className={`name ${size ? "big_name" : ""}`}>{name}</h4>
+        <p className={`Followed ${size ? "big_followed" : ""}`}>
+          Followed by {name} + 2 more
+        </p>
       </div>
-      <button className="active">follow</button>
+      <button className="active">{active ? active : "follow"}</button>
     </Style>
   );
 };

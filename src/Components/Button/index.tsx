@@ -5,11 +5,19 @@ interface ButtonProps {
   leftIcon?: string;
   leftText?: string;
   title: string;
+  className?: string;
+  onClick?: any;
 }
 
-const Button: FC<ButtonProps> = ({ leftIcon, leftText, title }) => {
+const Button: FC<ButtonProps> = ({
+  leftIcon,
+  leftText,
+  title,
+  className,
+  onClick,
+}) => {
   return (
-    <Style>
+    <Style onClick={onClick} className={className}>
       {leftIcon ? <img src={leftIcon} alt="" /> : null}
       {leftText ? <span>{leftText}</span> : null}
 

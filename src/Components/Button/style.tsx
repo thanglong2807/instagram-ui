@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 const Style = styled.button`
+  cursor: pointer;
   .text-btn {
-    color: var(--black, #262626);
     font-family: Segoe UI;
     font-size: 12px;
     font-style: normal;

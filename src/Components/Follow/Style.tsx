@@ -10,8 +10,10 @@ const Style = styled.div`
     width: 32px;
     height: 32px;
     border-radius: 32px;
+    cursor: pointer;
   }
   .info {
+    cursor: pointer;
     display: flex;
     width: 198px;
     padding: 1px 0px;
@@ -19,6 +21,7 @@ const Style = styled.div`
     justify-content: center;
     align-items: flex-start;
     gap: 8px;
+    flex: 1;
   }
   .name {
     color: var(--black, #262626);
@@ -48,6 +51,17 @@ const Style = styled.div`
     font-weight: 600;
     line-height: 11px; /* 91.667% */
     text-transform: capitalize;
+    cursor: pointer;
+  }
+  .big_img {
+    width: 56px;
+    height: 56px;
+  }
+  .big_name {
+    font-weight: 700;
+  }
+  .big_followed {
+    font-size: 14px;
   }
 `;
 
