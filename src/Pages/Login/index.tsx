@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 import Style from "./style";
 import background from "../../assets/images/Login/1.png";
 import instagram from "../../assets/images/Login/Union.svg";
@@ -42,11 +42,21 @@ const Login: React.FC = () => {
           } else {
             console.log("đăng nhập thành công");
             dispatch(dataLogin(checkLoginn));
+
+            localStorage.setItem("token", JSON.stringify(checkLoginn));
             dispatch(checkLogin(true));
           }
         }
       });
   };
+  useEffect(() => {
+    const getToken = localStorage.getItem("token");
+    if (getToken) {
+      dispatch(dataLogin(getToken));
+      dispatch(checkLogin(true));
+    }
+  }, []);
+
   return (
     <Style>
       <div className="container">

@@ -11,6 +11,7 @@ import Save from "../../assets/svg/Save.svg";
 import Emoji from "../../assets/svg/Emoji.svg";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import CommentBox from "../CommentBox";
 
 interface PostType {
   titleName?: string;
@@ -42,6 +43,8 @@ const Post: FC<PostType> = ({
   const [likeCount, setLikeCount] = useState(liked_by_user_count);
   const [valueComment, setValueComment] = useState("");
   const info = useSelector((state: any) => state.dataLogin);
+  const [activeComment, setactiveCommnet] = useState(false);
+  const [dataComment, setDataComment] = useState([]);
   const handleLikePosts = async () => {
     try {
       const data = {
@@ -52,7 +55,6 @@ const Post: FC<PostType> = ({
         "http://localhost/my-vue-app/server/databases/like.php",
         data
       );
-      console.log(response);
 
       console.log({
         post_id: post_id,
@@ -65,20 +67,44 @@ const Post: FC<PostType> = ({
       console.error("Error liking the post:", error);
     }
   };
-  const handleComment = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost/my-vue-app/server/databases/postcomment.php",
-        {
+  const handleComment = async (e: any) => {
+    if (e.keyCode === 13) {
+      try {
+        console.log("gửi");
+        const dataComment = {
+          post_id: post_id,
+          user_id: info.user_id,
           comments: valueComment,
-        }
-      );
+        };
+        const response = await axios.post(
+          "http://localhost/my-vue-app/server/databases/postcomment.php",
+          dataComment
+        );
 
-      // Xử lý kết quả tại đây nếu cần
-      console.log("Kết quả từ server:", response.data);
+        // Xử lý kết quả tại đây nếu cần
+        console.log("Kết quả từ server:", response.data);
+      } catch (error) {
+        // Xử lý lỗi nếu có
+        console.error("Lỗi khi gửi yêu cầu:", error);
+      }
+    }
+  };
+  const handleShowComment = async (id: number) => {
+    try {
+      axios
+        .post(
+          "http://localhost/my-vue-app/server/databases/get_data_comment.php",
+          {
+            id,
+          }
+        )
+        .then((res) => {
+          setactiveCommnet(true);
+          setDataComment(res.data);
+          console.log(res.data);
+        });
     } catch (error) {
-      // Xử lý lỗi nếu có
-      console.error("Lỗi khi gửi yêu cầu:", error);
+      console.log(`Lỗi ở phần handleShowComment: ${error}`);
     }
   };
 
@@ -113,7 +139,21 @@ const Post: FC<PostType> = ({
               />
             )}
             <img className="cursor" src={SharePosts} alt="" />
-            <img className="cursor" src={Comment} alt="" />
+            <img
+              className="cursor"
+              src={Comment}
+              alt=""
+              onClick={() => handleShowComment(post_id)}
+            />
+            {activeComment ? (
+              <CommentBox
+                imgPost={title}
+                titleName={post_owner_username}
+                avatarUser={post_owner_avatar}
+                activeLike={like}
+                dataComent={dataComment}
+              />
+            ) : null}
           </div>
           <div className="icon_left">
             <img src={Save} alt="" />
@@ -146,8 +186,8 @@ const Post: FC<PostType> = ({
             value={valueComment}
             onChange={(e) => setValueComment(e.target.value)}
             placeholder="Add a comment..."
+            onKeyDown={handleComment}
           />
-          <button onClick={handleComment}>Gửi</button>
         </div>
       </div>
     </Style>

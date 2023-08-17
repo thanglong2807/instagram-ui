@@ -33,6 +33,9 @@ const Style = styled.header`
     align-items: center;
     .menu_button_item {
       cursor: pointer;
+      &:hover {
+        transform: scale(1.1);
+      }
     }
   }
   .avatar {

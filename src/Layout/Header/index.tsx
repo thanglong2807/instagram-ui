@@ -8,12 +8,21 @@ import ActivityFeed from "../../assets/svg/header/ActivityFeed.svg";
 import Messenger from "../../assets/svg/header/Messenger.svg";
 import NewPosts from "../../assets/svg/header/NewPosts.svg";
 import avatar from "../../assets/svg/header/Profile-Pic-S.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Button from "../../Components/Button";
+import { useDispatch } from "react-redux";
+import { checkLogin } from "../../redux/action";
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const dataInfo = useSelector((state: any) => state.dataLogin);
-
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    dispatch(checkLogin(false));
+    navigate("/");
+  };
   return (
     <Style>
       <div className="container">
@@ -46,10 +55,11 @@ const Header = () => {
             <Link to="/my-profile">
               <img
                 className="menu_button_item avatar"
-                src={dataInfo.avatar}
+                src={dataInfo.avatar ? dataInfo.avatar : avatar}
                 alt=""
               />
             </Link>
+            <Button title="đăng xuất" onClick={handleLogout} />
           </div>
         </div>
       </div>

@@ -5,7 +5,7 @@ import NewMessenger from "../../assets/svg/messages/NewMessages.svg";
 import SharePosts from "../../assets/svg/messages/SharePosts.svg";
 import MessageProfile from "../../Components/MessageProfile";
 import Button from "../../Components/Button";
-const Messenger = () => {
+const Messenger: React.FC = () => {
   return (
     <React.Fragment>
       <Header />

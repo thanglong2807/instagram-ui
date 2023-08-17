@@ -50,14 +50,7 @@ const Home: React.FC = () => {
           <div className="list_post">
             <div className="story">
               <StoryItem titleStory="Thăng Long" />
-              <StoryItem titleStory="Thăng Long" />
-              <StoryItem titleStory="Thăng Long" />
-              <StoryItem titleStory="Thăng Long" />
-              <StoryItem titleStory="Thăng Long" />
-              <StoryItem titleStory="Thăng Long" />
-              <StoryItem titleStory="Thăng Long" />
-              <StoryItem titleStory="Thăng Long" />
-              <StoryItem titleStory="Thăng Long" />
+
               <div className="btn_next">
                 <img src={btnRight} alt="" />
               </div>
@@ -82,9 +75,6 @@ const Home: React.FC = () => {
               <span>See All</span>
             </div>
             <div className="list--follow">
-              <Follow name="Thăng Long" active="Follow" />
-              <Follow name="Thăng Long" active="Follow" />
-              <Follow name="Thăng Long" active="Follow" />
               <Follow name="Thăng Long" active="Follow" />
             </div>
             <div className="home_footer">
