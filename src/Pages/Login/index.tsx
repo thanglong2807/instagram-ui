@@ -52,7 +52,7 @@ const Login: React.FC = () => {
   useEffect(() => {
     const getToken = localStorage.getItem("token");
     if (getToken) {
-      dispatch(dataLogin(getToken));
+      dispatch(dataLogin(JSON.parse(getToken)));
       dispatch(checkLogin(true));
     }
   }, []);

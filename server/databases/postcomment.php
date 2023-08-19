@@ -1,5 +1,7 @@
 <?php
 
+
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -18,7 +20,8 @@ $user_id = $post_data['user_id'];
 $create_at = date("Y-m-d H:i:s"); // Current datetime
 
 // Insert comment into database
-$insert_query = "INSERT INTO comment_data (post_id, user_id, comment, created_at) VALUES ('$post_id', '$user_id', '$comments', '$create_at')";
+$insert_query = "INSERT INTO comment_data (post_id, user_id, comment, created_at) VALUES ('$post_id', '$user_id',
+'$comments', '$create_at')";
 
 if (mysqli_query($conn, $insert_query)) {
     echo "Comment đã được thêm thành công!";

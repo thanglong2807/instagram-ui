@@ -1,8 +1,6 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import Style from "./style";
-import iconMore from "../../assets/svg/More.svg";
-import StoryItem from "../StoryItem";
-import post from "../../assets/images/1.png";
+import More from "../../assets/svg/More.svg";
 import Like from "../../assets/svg/Lİke.svg";
 import LikeActive from "../../assets/svg/Like_active.png";
 import SharePosts from "../../assets/svg/SharePosts.svg";
@@ -12,6 +10,9 @@ import Emoji from "../../assets/svg/Emoji.svg";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import CommentBox from "../CommentBox";
+import StoryItem from "../StoryItem";
+import { io } from "socket.io-client";
+import { SERVER } from "../../ulint";
 
 interface PostType {
   titleName?: string;
@@ -31,20 +32,27 @@ interface PostType {
   commenter_emails?: string;
   commenter_avatars?: string;
 }
-const Post: FC<PostType> = ({
-  post_id,
-  title,
-  post_owner_username,
-  post_owner_avatar,
-  liked_by_user_count,
-  comments,
-}) => {
+
+const Post: FC<PostType> = (props) => {
+  const {
+    post_id,
+    title,
+    post_owner_username,
+    post_owner_avatar,
+    liked_by_user_count,
+    comments,
+  } = props;
+
   const [like, setLike] = useState(false);
   const [likeCount, setLikeCount] = useState(liked_by_user_count);
   const [valueComment, setValueComment] = useState("");
   const info = useSelector((state: any) => state.dataLogin);
-  const [activeComment, setactiveCommnet] = useState(false);
-  const [dataComment, setDataComment] = useState([]);
+  const [activeComment, setActiveComment] = useState(false);
+  const [dataComment, setDataComments] = useState([]);
+  const [socket, setSocket] = useState<any>(null);
+  const [checkId, setCheckId] = useState(-1);
+  const newSocket = io(SERVER);
+
   const handleLikePosts = async () => {
     try {
       const data = {
@@ -56,17 +64,13 @@ const Post: FC<PostType> = ({
         data
       );
 
-      console.log({
-        post_id: post_id,
-        user_id: info.user_id,
-      });
-
       setLike(!like);
       setLikeCount(response.data.like_count);
     } catch (error) {
       console.error("Error liking the post:", error);
     }
   };
+
   const handleComment = async (e: any) => {
     if (e.keyCode === 13) {
       try {
@@ -80,33 +84,36 @@ const Post: FC<PostType> = ({
           "http://localhost/my-vue-app/server/databases/postcomment.php",
           dataComment
         );
-
-        // Xử lý kết quả tại đây nếu cần
-        console.log("Kết quả từ server:", response.data);
       } catch (error) {
-        // Xử lý lỗi nếu có
-        console.error("Lỗi khi gửi yêu cầu:", error);
+        console.error("Error sending the request:", error);
       }
     }
   };
+
   const handleShowComment = async (id: number) => {
     try {
-      axios
-        .post(
-          "http://localhost/my-vue-app/server/databases/get_data_comment.php",
-          {
-            id,
-          }
-        )
-        .then((res) => {
-          setactiveCommnet(true);
-          setDataComment(res.data);
-          console.log(res.data);
-        });
+      setActiveComment(true);
+      newSocket.on("commentsData", (responseData) => {
+        setCheckId(id);
+        setDataComments(responseData);
+      });
+
+      newSocket.emit("getPostData", id);
     } catch (error) {
-      console.log(`Lỗi ở phần handleShowComment: ${error}`);
+      console.log(`Error in handleShowComment: ${error}`);
     }
   };
+  console.log(checkId);
+  console.log(dataComment);
+
+  useEffect(() => {
+    newSocket.on("data-updated", () => {
+      handleShowComment(checkId);
+    });
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
 
   return (
     <Style>
@@ -116,34 +123,25 @@ const Post: FC<PostType> = ({
           avatarUser={post_owner_avatar}
         />
         <button>
-          <img src={iconMore} alt="" />
+          <img src={More} alt="" />
         </button>
       </div>
-      <img className="img_post" src={title ? title : post} alt="" />
+      <img className="img_post" src={title ? title : "null"} alt="" />
       <div className="bottom">
         <div className="icons">
           <div className="icon_right">
-            {like ? (
-              <img
-                className="cursor"
-                onClick={handleLikePosts}
-                src={LikeActive}
-                alt=""
-              />
-            ) : (
-              <img
-                className="cursor"
-                onClick={handleLikePosts}
-                src={Like}
-                alt=""
-              />
-            )}
+            <img
+              className="cursor"
+              onClick={handleLikePosts}
+              src={like ? LikeActive : Like}
+              alt=""
+            />
             <img className="cursor" src={SharePosts} alt="" />
             <img
               className="cursor"
               src={Comment}
               alt=""
-              onClick={() => handleShowComment(post_id)}
+              onClick={() => post_id && handleShowComment(post_id)}
             />
             {activeComment ? (
               <CommentBox
@@ -151,7 +149,18 @@ const Post: FC<PostType> = ({
                 titleName={post_owner_username}
                 avatarUser={post_owner_avatar}
                 activeLike={like}
-                dataComent={dataComment}
+                dataComment={dataComment}
+                isLike={like}
+                handleLikePosts={handleLikePosts}
+                LikeActive={LikeActive}
+                Like={Like}
+                SharePosts={SharePosts}
+                handleShowComment={handleShowComment}
+                Save={Save}
+                likeCount={likeCount}
+                Emoji={Emoji}
+                post_id={post_id}
+                Comment={Comment}
               />
             ) : null}
           </div>
@@ -162,8 +171,8 @@ const Post: FC<PostType> = ({
         <div className="likes">
           <span> {likeCount} Likes</span>
         </div>
-        <div className="commnets">
-          <div className="header-commnet">
+        <div className="comments">
+          <div className="header-comment">
             <div className="user__comment">
               <span className="user-name">{post_owner_username} </span>
               <div className="comment-wrapper">

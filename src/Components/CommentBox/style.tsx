@@ -80,5 +80,22 @@ const Style = styled.div`
       gap: 10px;
     }
   }
+  .action_comment {
+    position: absolute;
+    bottom: 0;
+    padding: 10px;
+    border: 1px solid #cccccc60;
+    width: 100%;
+  }
+  .icons {
+    width: 100%;
+  }
+  .title_likes {
+    font-size: 14px;
+  }
+  .time_like {
+    font-size: 12px;
+    color: #cccccce2;
+  }
 `;
 export default Style;
